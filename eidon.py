@@ -1,6 +1,7 @@
 import sys
 from core.functions import analyze_type, infer_mbti_from_stack
 from core.bigfive import BigFiveProfile
+from core.cbt import analyze_cbt_thought 
 from utils import parse_arguments
 
 def main():
@@ -30,6 +31,21 @@ def main():
                 print("\n".join(b5.get_report()))
             except ValueError as e:
                 print(f"Error: {str(e)}")
+                sys.exit(1)
+
+        if args.cbt_thought:
+            try:
+                cbt_results = analyze_cbt_thought(args.cbt_thought)
+                print("\nCBT Analysis:")
+                if cbt_results['distortions']:
+                    print("Detected cognitive distortions:")
+                    for dist in cbt_results['distortions']:
+                        print(f"- {dist['name']}: {dist['description']}")
+                        print(f"  Suggested reframe: {dist['reframe']}")
+                else:
+                    print("No common cognitive distortions detected.")
+            except Exception as e:
+                print(f"Error during CBT analysis: {str(e)}")
                 sys.exit(1)
 
     elif args.command == "infer":
