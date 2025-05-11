@@ -30,6 +30,11 @@ def parse_arguments():
         '--compare-to',
         help='Compare to another MBTI type for Socionics relation'
     )
+    analyze_parser.add_argument(
+        '--cbt-thought',
+        type=str,
+        help='Input a free-text thought for CBT cognitive distortion analysis'
+    )
 
     # Infer command
     infer_parser = subparsers.add_parser("infer", help="Infer MBTI type from cognitive function stack")
@@ -42,10 +47,10 @@ def parse_arguments():
 
     args = parser.parse_args()
 
-    # Validation: analyze requires at least --type or --bigfive
+    # Validation: analyze requires at least --type or --bigfive or --cbt-thought
     if args.command == "analyze":
-        if not args.type and not args.bigfive:
-            parser.error("analyze command requires at least --type or --bigfive")
+        if not args.type and not args.bigfive and not args.cbt_thought:
+            parser.error("analyze command requires at least --type or --bigfive or --cbt-thought")
 
     return args
 
