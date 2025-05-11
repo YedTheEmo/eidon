@@ -1,4 +1,6 @@
+import sys
 from core.functions import analyze_type, infer_mbti_from_stack
+from core.bigfive import BigFiveProfile
 from utils import parse_arguments
 
 def main():
@@ -7,12 +9,28 @@ def main():
     if args.command == "analyze":
         if args.functions is None:
             args.functions = ["ego", "subconscious", "unconscious", "superego"]
-        analyze_type(
-            args.type.upper(),
-            args.functions,
-            show_socionics=getattr(args, 'show_socionics', False),
-            compare_to_type=args.compare_to.upper() if args.compare_to else None
-        )
+
+        if args.type:
+            analyze_type(
+                args.type.upper(),
+                args.functions,
+                show_socionics=getattr(args, 'show_socionics', False),
+                compare_to_type=args.compare_to.upper() if args.compare_to else None
+            )
+
+        if args.bigfive:
+            try:
+                if len(args.bigfive) != 5:
+                    raise ValueError("Big Five input must have exactly 5 values.")
+                o, c, e, a, n = args.bigfive
+                mbti_type = args.type.upper() if args.type else None
+                b5 = BigFiveProfile(o, c, e, a, n, mbti_type=mbti_type)
+                b5.validate()
+                print("\nBig Five Analysis:")
+                print("\n".join(b5.get_report()))
+            except ValueError as e:
+                print(f"Error: {str(e)}")
+                sys.exit(1)
 
     elif args.command == "infer":
         stack = [func.strip() for func in args.stack]
